@@ -40,3 +40,51 @@
   @apply border-l-2 border-[#141414] pl-4 italic opacity-70;
 }
 
+
+.btn-rect {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* gap-2 = 0.5rem */
+  padding-left: 1.5rem;  /* px-6 = 1.5rem */
+  padding-right: 1.5rem; /* px-6 = 1.5rem */
+  padding-top: 0.5rem;   /* py-2 = 0.5rem */
+  padding-bottom: 0.5rem; /* py-2 = 0.5rem */
+  background-color: #141414;
+  color: #E4E3E0;
+  font-family: monospace;
+  font-size: 0.875rem; /* text-sm = 0.875rem */
+  transition: background-color 0.2s ease;
+}
+
+.btn-rect:hover {
+  background-color: rgba(20, 20, 20, 0.9); /* #141414 with 90% opacity */
+}
+
+.btn-rect-minor {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* gap-2 = 0.5rem */
+  padding-left: 0.75rem;  /* px-3 = 0.75rem */
+  padding-right: 0.75rem; /* px-3 = 0.75rem */
+  padding-top: 0.25rem;   /* py-1 = 0.25rem */
+  padding-bottom: 0.25rem; /* py-1 = 0.25rem */
+  background-color: #141414;
+  color: #E4E3E0;
+  font-family: monospace;
+  font-size: 0.75rem; /* text-xs = 0.75rem */
+  transition: background-color 0.2s ease;
+}
+
+.btn-rect-minor:hover {
+  background-color: rgba(20, 20, 20, 0.9); /* #141414 with 90% opacity */
+}
+
+.btn-ico{
+  padding: 0.25rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-ico:hover {
+  background-color: #141414;
+  color: #E4E3E0;
+}

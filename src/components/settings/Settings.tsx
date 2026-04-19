@@ -38,11 +38,21 @@ export function Settings({
     if (stagedConfig !== config) {
       console.log("spawn dialog")
       const confirmed = await dialogManager.show(
+        (
         <div>Save unsaved changes?</div>
+        ),
+        {
+          positiveBtnText: "Yes",
+          negativeBtnText: "Discard",
+        }
       );
+
       if (confirmed) {
         onUpdateConfig(stagedConfig, true);
         onClose();
+      }
+      else {
+        alert("to implement: discard config changes");
       }
       return;
     }
@@ -90,7 +100,7 @@ export function Settings({
         {/* Header */}
         <div className="p-4 border-b border-[#141414] flex items-center justify-between bg-white">
           <h2 className="font-mono font-bold uppercase tracking-widest">System_Settings</h2>
-          <button onClick={handleClose} className="p-1 hover:bg-[#141414] hover:text-[#E4E3E0] transition-colors">
+          <button onClick={handleClose} className="btn-ico">
             <X size={20} />
           </button>
         </div>
@@ -107,7 +117,7 @@ export function Settings({
         <div className="p-4 border-t border-[#141414] bg-white flex justify-end">
           <button 
             onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-2 bg-[#141414] text-[#E4E3E0] font-mono text-sm hover:bg-[#141414]/90 transition-colors"
+            className="btn-rect"
           >
             <Save size={18} /> SAVE_CONFIG
           </button>

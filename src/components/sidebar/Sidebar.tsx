@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { Plus, MessageSquare, User, Settings, Trash2, ChevronRight, ChevronDown, Upload } from "lucide-react";
+import { Plus, Settings, Upload } from "lucide-react";
 import type { Char2ChatIndex, Character, Chat, ChatMetadata } from "@/src/types";
-import { cn } from "@/src/lib/utils";
-import { motion } from "motion/react";
 
 import { CharacterEntry } from "./CharacterEntry";
 
@@ -56,7 +54,7 @@ export function Sidebar({
         <h1 className="font-mono font-bold text-lg tracking-tighter">SILLY_LITE</h1>
         <button 
           onClick={onShowSettings}
-          className="p-1 hover:bg-[#141414] hover:text-[#E4E3E0] transition-colors"
+          className="btn-ico"
         >
           <Settings size={18} />
         </button>
@@ -72,13 +70,13 @@ export function Sidebar({
             <div className="flex items-center justify-between px-2 mb-2">
               <span className="font-mono text-[10px] opacity-50 uppercase tracking-widest">Characters</span>
               <div className="flex gap-1">
-                <label className="p-1 hover:bg-[#141414] hover:text-[#E4E3E0] transition-colors cursor-pointer">
+                <label className="btn-ico">
                   <Upload size={14} />
                   <input type="file" className="hidden" onChange={handleFileChange} accept=".json,.png" />
                 </label>
                 <button 
                   onClick={onCreateCharacter}
-                  className="p-1 hover:bg-[#141414] hover:text-[#E4E3E0] transition-colors"
+                  className="btn-ico"
                 >
                   <Plus size={14} />
                 </button>

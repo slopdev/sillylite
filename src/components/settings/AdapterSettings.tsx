@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import type { GlobalConfig, LMConfig } from "@/src/types";
 import { X, Plus, Trash2, Save } from "lucide-react";
-import { motion } from "motion/react";
 import { v4 as uuidv4 } from "uuid";
 
 interface AdapterSettingsProps {
@@ -50,7 +49,7 @@ export function AdapterSettings({
           <h3 className="font-mono text-xs opacity-50 uppercase tracking-widest">LLM Adapters</h3>
           <button 
             onClick={handleAdd}
-            className="flex items-center gap-2 px-3 py-1 bg-[#141414] text-[#E4E3E0] text-xs font-mono hover:bg-[#141414]/90 transition-colors"
+            className="btn-rect-minor"
           >
             <Plus size={14} /> ADD_ADAPTER
           </button>

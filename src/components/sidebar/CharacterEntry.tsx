@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Plus, MessageSquare, User, Settings, Trash2, ChevronRight, ChevronDown, Upload } from "lucide-react";
 import type { Character, Chat, ChatMetadata } from "@/src/types";
 import { cn } from "@/src/lib/utils";
-import { motion } from "motion/react";
 
 interface CharacterEntryProps{
   character: Character;
@@ -54,7 +53,7 @@ export function CharacterEntry({
         <span className="flex-1 truncate text-sm font-medium">{character.name}</span>
         <button 
           onClick={(e) => { e.stopPropagation(); onCreateChat(character.id); }}
-          className="opacity-0 group-hover:opacity-100 p-1 hover:bg-[#141414] hover:text-[#E4E3E0] transition-all"
+          className="btn-ico"
         >
           <Plus size={12} />
         </button>
