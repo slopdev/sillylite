@@ -60,7 +60,7 @@ export function AdapterSettings({
             <div key={idx} className="p-4 border border-[#141414] bg-white space-y-4">
               <div className="flex items-center justify-between">
                 <div className="font-bold text-sm uppercase tracking-widest font-mono">
-                  {adapter.label} ADAPTER
+                  {adapter.label}
                 </div>
                 <button onClick={() => handleRemove(idx)} className="text-red-500 hover:bg-red-50 p-1">
                   <Trash2 size={16} />

@@ -47,9 +47,12 @@ export function ChatWindow({
   const [isGenerating, setIsGenerating] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [chatTitle, setChatTitle] = useState("");
+  const [chat, setChat] = useState<Chat | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const [chat, setChat] = useState<Chat | null>(null)
+
+  // TODO: get rid of hard-coded value
+  const [activeAdapter, setActiveAdapter] = useState<LMConfig | null>(config.lm_config[0]);
 
   // derived
   const messages = chat === null ? null : chat.messages;
@@ -122,15 +125,14 @@ export function ChatWindow({
 
   // lm call for send message
   const generateResponse = async (messagesToLM: Message[], swipeIndex?: number) => {
-    if (config.lm_config.length === 0) {
+    if (config.lm_config.length === 0 || activeAdapter === null) {
       alert("No LLM adapters configured. Go to Settings.");
       return;
     }
 
     setIsGenerating(true);
 
-    const adapterConfig = config.lm_config[0]; // Use first for now
-    const adapter = adaptersRegistry[adapterConfig.adapter_id] || adaptersRegistry.echo;
+    const adapter = adaptersRegistry[activeAdapter.adapter_id] || adaptersRegistry.echo;
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
@@ -162,8 +164,8 @@ export function ChatWindow({
       // sampling
       let fullText = "";
       const flatChat = flattenChat({ ...chat, messages: stagedMsgs })
-      const formatted2 = applyStdFormatter(flatChat, character.globals);
-      for await (const chunk of adapter.complete(formatted2, adapterConfig, abortController.signal)) {
+      const formatted = applyStdFormatter(flatChat, character.globals);
+      for await (const chunk of adapter.complete(formatted, activeAdapter, abortController.signal)) {
         fullText += chunk.content;
         handleUpdateMsgs([...stagedMsgs, { ...assistantMsg, content: fullText }]);
       }
@@ -172,8 +174,8 @@ export function ChatWindow({
       const newSwipe: Swipe = {
         text: fullText,
         created_at: Date.now(),
-        model: adapterConfig.model,
-        api: adapterConfig.adapter_id
+        model: activeAdapter.model,
+        api: activeAdapter.adapter_id
       };
 
       const finalAssistantMsg: Message = {
@@ -200,10 +202,16 @@ export function ChatWindow({
     abortControllerRef.current?.abort();
   };
 
-  const updateChatTitle = (newTitle: string) => {
+  const handleAdapterSwitch = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = event.target.value;
+    const selectedAdapter = config.lm_config.find((a) => a.id === selectedId) ?? null;
+    setActiveAdapter(selectedAdapter);
+  };
+
+  const handleUpdateChatTitle = (newTitle: string) => {
     onUpdateChatMetadata(chat.id, { title: newTitle});
     setChatTitle(newTitle);
-  }
+  };
 
   // --------------------------------------------------
 
@@ -212,17 +220,36 @@ export function ChatWindow({
       {/* Header */}
       <div className="px-6 py-3 border-b border-[#141414] flex items-center justify-between bg-white/50">
         <div>
+          <label htmlFor="chat-rename" className="sr-only">
+            Rename chat title
+          </label>
           <input 
             value={chatTitle || ""}
-            onChange={(e) => updateChatTitle(e.target.value)}
+            onChange={(e) => handleUpdateChatTitle(e.target.value)}
             placeholder="Untitled Chat"
             className="font-bold text-sm bg-transparent border-none p-0 focus:ring-0 w-full"
+            name="chat-rename"
+            id="chat-rename"
           />
           <p className="text-[10px] font-mono opacity-50 uppercase tracking-tight">
             {character.name} / {chat.messages.length} MESSAGES
           </p>
         </div>
+
+        {/* header right side */}
         <div className="flex gap-2">
+          <div>
+            <label htmlFor="adapter-select" className="sr-only">
+              Select adapter
+            </label>
+            <select defaultValue={activeAdapter !== null ? activeAdapter.id: "unknown"} name="adapter-select" id="adapter-select">
+              {config.lm_config.map((a) => (
+                <option value={a.id} key={a.id}>
+                  {a.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <button 
             onClick={() => onDeleteChat(chat.id)}
             className="p-1.5 hover:bg-red-500 hover:text-white transition-colors"
@@ -283,6 +310,7 @@ export function ChatWindow({
             placeholder="Type a message..."
             className="w-full bg-white border border-[#141414] p-4 pr-12 min-h-[100px] max-h-[300px] resize-none focus:outline-none focus:ring-1 focus:ring-[#141414] transition-all font-sans text-sm"
           />
+
           <div className="absolute right-3 bottom-3 flex gap-2">
             {isGenerating ? (
               <button 

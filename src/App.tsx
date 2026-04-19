@@ -4,7 +4,7 @@ import type { Char2ChatIndex, Character, Chat, ChatMetadata, GlobalConfig, LMCon
 import { Sidebar } from "./components/sidebar/Sidebar";
 import { ChatWindow } from "./components/ChatWindow";
 import { Settings } from "./components/settings/Settings";
-import { MessageSquare, Settings as SettingsIcon, User, Plus } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 
