@@ -3,6 +3,9 @@ import { useRef, useEffect, useState, ReactNode, CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from "lucide-react";
 
+// 1. Define a type for the three possible outcomes
+export type DialogResult = 'yes' | 'no' | 'cancel';
+
 interface DialogOptions {
   className?: string;
   preventBackdropClose?: boolean;
@@ -21,13 +24,10 @@ const MODAL_CLOSE_BTN_STYLE: CSSProperties = {
 
 /* common/Modal */
 const DIALOG_ROOT_STYLE: CSSProperties = {
-  //centering
   position: "fixed",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-
-  //rest
   padding: "0.5rem",
 };
 
@@ -43,15 +43,16 @@ const DIALOG_ACTIONS_STYLE: CSSProperties = {
 
 // --------------------------------------------------
 
-let dialogResolver: ((value: boolean | PromiseLike<boolean>) => void) | null = null;
+// Update resolver to handle DialogResult
+let dialogResolver: ((value: DialogResult) => void) | null = null;
 
 export const dialogManager = {
-  show(content: ReactNode, options: DialogOptions = {}): Promise<boolean> {
+  show(content: ReactNode, options: DialogOptions = {}): Promise<DialogResult> {
     window.dispatchEvent(new CustomEvent<DialogShowEventDetail>('dialog:show', { 
       detail: { content, options } 
     }));
     
-    return new Promise<boolean>((resolve) => {
+    return new Promise<DialogResult>((resolve) => {
       dialogResolver = resolve;
     });
   }
@@ -95,7 +96,8 @@ export function DialogRoot(): ReactNode | null {
 
   // --------------------------------------------------
   
-  const handleClose = (returnValue: boolean): void => {
+  // Updated to accept DialogResult
+  const handleClose = (returnValue: DialogResult): void => {
     dialogRef.current?.close();
     setIsOpen(false);
     
@@ -105,18 +107,22 @@ export function DialogRoot(): ReactNode | null {
     }
   };
   
-  const handleCancel = (e: React.SyntheticEvent<HTMLDialogElement, Event>): void => {
+  const handleCancelWrapper = (e: React.SyntheticEvent<HTMLDialogElement, Event>): void => {
     e.preventDefault();
-    handleClose(false);
+    handleCancel(); // Fixed: added parentheses to call the function
   };
+
+  const handleCancel = () => {
+    handleClose('cancel'); // Encode the 'cancel' state here
+  }
   
   // --------------------------------------------------
  
   return createPortal(
     <dialog
       ref={dialogRef}
-      onCancel={handleCancel}
-      onClose={() => handleClose(false)}
+      onCancel={handleCancelWrapper}
+      onClose={() => handleClose('cancel')} // Browser-level close (ESC) returns cancel
       className="dialog-root"
       style={DIALOG_ROOT_STYLE}
     >
@@ -124,7 +130,7 @@ export function DialogRoot(): ReactNode | null {
         <div className="dialog-content" style={DIALOG_CONTENT_STYLE}>
           <button 
             className="dialog-close-x btn-ico" 
-            onClick={() => handleClose(false)}
+            onClick={() => handleCancel()}
             aria-label="Close dialog"
             style={MODAL_CLOSE_BTN_STYLE}
           >
@@ -134,8 +140,10 @@ export function DialogRoot(): ReactNode | null {
           {content}
           
           <div className="dialog-actions" style={DIALOG_ACTIONS_STYLE}>
-            <button className="btn-rect-minor" onClick={() => handleClose(false)}>{noBtnText}</button>
-            <button className="btn-rect-minor" onClick={() => handleClose(true)}>{yesBtnText}</button>
+            {/* Negative button explicitly returns false */}
+            <button className="btn-rect-minor" onClick={() => handleClose('no')}>{noBtnText}</button>
+            {/* Positive button explicitly returns true */}
+            <button className="btn-rect-minor" onClick={() => handleClose('yes')}>{yesBtnText}</button>
           </div>
         </div>
       )}

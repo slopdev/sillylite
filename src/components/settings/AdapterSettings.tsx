@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import type { GlobalConfig, LMConfig } from "@/src/types";
-import { X, Plus, Trash2, Save } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
 interface AdapterSettingsProps {
@@ -12,8 +12,6 @@ export function AdapterSettings({
   config,
   onUpdateConfig,
 }: AdapterSettingsProps) {
-  const [adapters, setAdapters] = useState<LMConfig[]>(config);
-
   const handleAdd = () => {
     const newAdapter: LMConfig = {
       id: uuidv4(),
@@ -24,21 +22,18 @@ export function AdapterSettings({
       model: "gpt-3.5-turbo",
       parameters: { temperature: 0.7 }
     };
-    const adaptersNew = [...adapters, newAdapter];
-    setAdapters(adaptersNew);
+    const adaptersNew = [...config, newAdapter];
     onUpdateConfig({ lm_config: adaptersNew });
   };
 
   const handleUpdate = (idx: number, updates: Partial<LMConfig>) => {
-    const next = [...adapters];
+    const next = [...config];
     next[idx] = { ...next[idx], ...updates };
-    setAdapters(next);
     onUpdateConfig({ lm_config: next });
   };
 
   const handleRemove = (idx: number) => {
-    const adaptersNew = adapters.filter((_, i) => i !== idx);
-    setAdapters(adaptersNew);
+    const adaptersNew = config.filter((_, i) => i !== idx);
     onUpdateConfig({ lm_config: adaptersNew });
   };
 
@@ -56,7 +51,7 @@ export function AdapterSettings({
         </div>
 
         <div className="space-y-4">
-          {adapters.map((adapter, idx) => (
+          {config.map((adapter, idx) => (
             <div key={idx} className="p-4 border border-[#141414] bg-white space-y-4">
               <div className="flex items-center justify-between">
                 <div className="font-bold text-sm uppercase tracking-widest font-mono">
@@ -117,7 +112,7 @@ export function AdapterSettings({
               </div>
             </div>
           ))}
-          {adapters.length === 0 && (
+          {config.length === 0 && (
             <div className="text-center py-8 border border-dashed border-[#141414]/30 font-mono text-xs opacity-40">
               NO_ADAPTERS_CONFIGURED
             </div>

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import type { GlobalConfig, LMConfig } from "@/src/types";
 import { X, Plus, Trash2, Save } from "lucide-react";
 import { motion } from "motion/react";
@@ -20,6 +20,7 @@ export function Settings({
 }: SettingsProps) {
 
   const [stagedConfig, setStagedConfig] = useState<GlobalConfig>(config);
+  const [unsaved, setUnsaved] = useState(false);
   const [currentTab, setCurrentTab] = useState("general");
   
   // --------------------------------------------------
@@ -27,19 +28,19 @@ export function Settings({
   const handleUpdate = (updates: Partial<GlobalConfig>) => {
     const cfg = {...stagedConfig, ...updates};
     setStagedConfig(cfg);
+    setUnsaved(true);
   };
 
   const handleSave = () => {
     onUpdateConfig(stagedConfig, true);
-    onClose();
+    setUnsaved(false);
   };
 
   const handleClose = async () => {
-    if (stagedConfig !== config) {
-      console.log("spawn dialog")
-      const confirmed = await dialogManager.show(
+    if (unsaved) {
+      const modalSaveStatus = await dialogManager.show(
         (
-        <div>Save unsaved changes?</div>
+        <div>Save changes?</div>
         ),
         {
           positiveBtnText: "Yes",
@@ -47,14 +48,19 @@ export function Settings({
         }
       );
 
-      if (confirmed) {
+      if (modalSaveStatus === "yes") {    // save
         onUpdateConfig(stagedConfig, true);
+        setUnsaved(false);
         onClose();
       }
-      else {
-        alert("to implement: discard config changes");
+      else if (modalSaveStatus === "no") {    // discard
+        setStagedConfig(structuredClone(config));
+        setUnsaved(false);
+        onClose();
       }
-      return;
+      else {   // cancel
+        return;
+      }
     }
     onClose();
   }
@@ -99,7 +105,7 @@ export function Settings({
 
         {/* Header */}
         <div className="p-4 border-b border-[#141414] flex items-center justify-between bg-white">
-          <h2 className="font-mono font-bold uppercase tracking-widest">System_Settings</h2>
+          <h2 className="font-mono font-bold uppercase tracking-widest">System_Settings {unsaved ? "*" : ""}</h2>
           <button onClick={handleClose} className="btn-ico">
             <X size={20} />
           </button>

@@ -129,9 +129,6 @@ export default function App() {
   const handleDeleteChat = async (id: string) => {
     await api.deleteChat(id);
     
-    // Keep redundant state update for legacy chats array
-    // setChats(prev => prev.filter(c => c.id !== id));
-
     // Update chatIndex by finding the character bucket containing this chat ID
     setChatIndex(prev => {
       const charId = Object.keys(prev).find(key => prev[key].some(c => c.id === id));
