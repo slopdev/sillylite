@@ -1,4 +1,4 @@
-import type { Chat, FlatChat, LMConfig } from "../types";
+import type { FlatChat, LMConfig } from "../types";
 
 export interface TextChunk {
   content: string;

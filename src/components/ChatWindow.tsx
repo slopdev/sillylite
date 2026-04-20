@@ -52,9 +52,7 @@ export function ChatWindow({
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // TODO: get rid of hard-coded value
-  const [activeAdapter, setActiveAdapter] = useState<LMConfig | null>(config.lm_config[0]);
-
-  // derived
+  const [activeAdapter, setActiveAdapter] = useState<LMConfig | null>(config.lm_config?.[0] ?? null);
   const messages = chat === null ? null : chat.messages;
 
   useEffect(() => {
@@ -215,6 +213,27 @@ export function ChatWindow({
 
   // --------------------------------------------------
 
+  const adapterSwitcherContent = activeAdapter !== null ? (
+    <div>
+      <label htmlFor="adapter-select" className="sr-only">
+        Select adapter
+      </label>
+      <select defaultValue={activeAdapter !== null ? activeAdapter.id : -1} name="adapter-select" id="adapter-select">
+        {config.lm_config.map((a) => (
+          <option value={a.id} key={a.id}>
+            {a.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  ) : (
+    <div>
+      no adapters selected
+    </div>
+  )
+
+  // --------------------------------------------------
+
   let layout = (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#E4E3E0]">
       {/* Header */}
@@ -238,18 +257,8 @@ export function ChatWindow({
 
         {/* header right side */}
         <div className="flex gap-2">
-          <div>
-            <label htmlFor="adapter-select" className="sr-only">
-              Select adapter
-            </label>
-            <select defaultValue={activeAdapter !== null ? activeAdapter.id: "unknown"} name="adapter-select" id="adapter-select">
-              {config.lm_config.map((a) => (
-                <option value={a.id} key={a.id}>
-                  {a.label}
-                </option>
-              ))}
-            </select>
-          </div>
+
+          {adapterSwitcherContent}
           <button 
             onClick={() => onDeleteChat(chat.id)}
             className="p-1.5 hover:bg-red-500 hover:text-white transition-colors"
