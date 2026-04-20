@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { Tabs, TabItem } from "@/src/components/common/TabView";
 import { AdapterSettings } from "./AdapterSettings";
 import { GeneralSettings } from "./GeneralSettings";
+import { FormatterSettings } from "./FormatterSettings";
 import { dialogManager } from "../common/Modal";
 
 interface SettingsProps {
@@ -82,9 +83,14 @@ export function Settings({
     <GeneralSettings></GeneralSettings>
   )
 
+  const formatterSettingsContent = (
+    <FormatterSettings></FormatterSettings>
+  )
+
   const tabs: TabItem[] = [
     { id: "general", label: "General", content: generalSettingsContent },
-    { id: "adapters", label: "Adapters", content: adapterContent }
+    { id: "adapters", label: "Adapters", content: adapterContent },
+    { id: "formatters", label: "Formatters", content: formatterSettingsContent },
   ];
 
   // --------------------------------------------------
