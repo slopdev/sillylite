@@ -48,18 +48,15 @@ export function ChatWindow({
   const [loaded, setLoaded] = useState(false);
   const [chatTitle, setChatTitle] = useState("");
   const [chat, setChat] = useState<Chat | null>(null)
-  const scrollRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // TODO: get rid of hard-coded value
-  const [activeAdapter, setActiveAdapter] = useState<LMConfig | null>(config.lm_config?.[0] ?? null);
-  const messages = chat === null ? null : chat.messages;
-
+  const [activeAdapter, setActiveAdapter] = useState<LMConfig | null>(null);
+  
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
+    const newAdapter = config.lm_config?.[0] ?? null;
+    setActiveAdapter(newAdapter);
+  }, [config]);
 
   useEffect(() => {
     async function loadMessages() {
@@ -270,7 +267,6 @@ export function ChatWindow({
 
       {/* Messages */}
       <div 
-        ref={scrollRef}
         className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar"
       >
         <AnimatePresence initial={false}>
