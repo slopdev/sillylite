@@ -17,7 +17,7 @@ const DATA_DIR = path.join(__dirname, "data");
 const CHARACTERS_DIR = path.join(DATA_DIR, "characters");
 const CONFIG_FILE = path.join(DATA_DIR, "config.json");
 const DEFAULT_CONFIG: GlobalConfig = {
-  lm_config: []
+  lm_config: {}
 };
 
 async function ensureDirs() {

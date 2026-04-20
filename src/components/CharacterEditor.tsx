@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import type { Character } from "@/src/types";
-import { X, Save, User } from "lucide-react";
+import { X, Save, Trash2, User } from "lucide-react";
 import { motion } from "motion/react";
 
 interface CharacterEditorProps {
   character: Character;
   onSave: (updates: Partial<Character>) => void;
   onClose: () => void;
+  onDeleteCharacter: (id: string) => void;
 }
 
-export function CharacterEditor({ character, onSave, onClose }: CharacterEditorProps) {
+export function CharacterEditor({ character, onSave, onClose, onDeleteCharacter }: CharacterEditorProps) {
   const [name, setName] = useState(character.name);
   const [globals, setGlobals] = useState(character.globals);
 
@@ -18,9 +19,16 @@ export function CharacterEditor({ character, onSave, onClose }: CharacterEditorP
     onClose();
   };
 
+  const handleDelete = () => {
+    onDeleteCharacter(character.id);
+    onClose();
+  }
+
   const updateGlobal = (key: string, value: string) => {
     setGlobals(prev => ({ ...prev, [key]: value }));
   };
+
+  // --------------------------------------------------
 
   return (
     <motion.div 
@@ -76,13 +84,20 @@ export function CharacterEditor({ character, onSave, onClose }: CharacterEditorP
           </div>
         </div>
 
-        <div className="p-4 border-t border-[#141414] bg-white flex justify-end">
+        <div className="p-4 border-t border-[#141414] bg-white flex">
+          <button 
+            onClick={handleDelete}
+            className="btn-ico"
+          >
+            <Trash2 size={18} /> 
+          </button>
           <button 
             onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-2 bg-[#141414] text-[#E4E3E0] font-mono text-sm hover:bg-[#141414]/90 transition-colors"
+            className="btn-rect ml-auto"
           >
             <Save size={18} /> SAVE_CHARACTER
           </button>
+
         </div>
       </motion.div>
     </motion.div>

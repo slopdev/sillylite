@@ -7,11 +7,12 @@ import e from "express";
 
 import type { Chat, Character, Message, LMConfig, Swipe, ChatMetadata } from "../types";
 import { applyStdFormatter } from "../lib/formatter";
-import { flattenChat } from "../lib/utils";
+import { flattenChat, objIsEmpty } from "../lib/utils";
 import { adaptersRegistry } from "../lib/adapters";
 import { api } from "../lib/api";
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const INVALID_ADAPTER_ID = "invalid_adapter_id_sentinel"
 
 function _wrapContainer(Component: React.ReactNode): React.ReactNode{
     return (
@@ -29,7 +30,7 @@ interface ChatWindowProps {
   onUpdateChatMetadata: (id: string, updates: Partial<ChatMetadata>) => void;
   onDeleteChat: (id: string) => void;
   onForkChat: (id: Chat | null, index: number) => void;
-  config: { lm_config: LMConfig[] };
+  config: { lm_config: Record<string, LMConfig> };
 }
 
 
@@ -51,12 +52,9 @@ export function ChatWindow({
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // TODO: get rid of hard-coded value
-  const [activeAdapter, setActiveAdapter] = useState<LMConfig | null>(null);
-  
-  useEffect(() => {
-    const newAdapter = config.lm_config?.[0] ?? null;
-    setActiveAdapter(newAdapter);
-  }, [config]);
+  // bug fix? refactor to adapter uuid->lmconfig instead of list? track adapter uuid as state
+  const [activeAdapterId, setActiveAdapterId] = useState<string>(INVALID_ADAPTER_ID);
+  const activeAdapter = config.lm_config[activeAdapterId] ?? null;
 
   useEffect(() => {
     async function loadMessages() {
@@ -120,14 +118,14 @@ export function ChatWindow({
 
   // lm call for send message
   const generateResponse = async (messagesToLM: Message[], swipeIndex?: number) => {
-    if (config.lm_config.length === 0 || activeAdapter === null) {
-      alert("No LLM adapters configured. Go to Settings.");
+    if ( objIsEmpty(config.lm_config) || activeAdapter === null) {
+      alert("No active adapter");
       return;
     }
 
     setIsGenerating(true);
 
-    const adapter = adaptersRegistry[activeAdapter.adapter_id] || adaptersRegistry.echo;
+    const adapter = adaptersRegistry[activeAdapter.adapter_kind] || adaptersRegistry.echo;
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
@@ -170,7 +168,7 @@ export function ChatWindow({
         text: fullText,
         created_at: Date.now(),
         model: activeAdapter.model,
-        api: activeAdapter.adapter_id
+        api: activeAdapter.adapter_kind
       };
 
       const finalAssistantMsg: Message = {
@@ -198,9 +196,9 @@ export function ChatWindow({
   };
 
   const handleAdapterSwitch = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedId = event.target.value;
-    const selectedAdapter = config.lm_config.find((a) => a.id === selectedId) ?? null;
-    setActiveAdapter(selectedAdapter);
+    const selectedAdapterId = event.target.value;
+    console.log("[handleAdapterSwitch]: ", selectedAdapterId);
+    setActiveAdapterId(selectedAdapterId);
   };
 
   const handleUpdateChatTitle = (newTitle: string) => {
@@ -210,14 +208,22 @@ export function ChatWindow({
 
   // --------------------------------------------------
 
-  const adapterSwitcherContent = activeAdapter !== null ? (
+  const adapterSwitcherContent = (!objIsEmpty(config.lm_config)) ? (
     <div>
       <label htmlFor="adapter-select" className="sr-only">
         Select adapter
       </label>
-      <select defaultValue={activeAdapter !== null ? activeAdapter.id : -1} name="adapter-select" id="adapter-select">
-        {config.lm_config.map((a) => (
-          <option value={a.id} key={a.id}>
+      <select
+        defaultValue={activeAdapterId}
+        name="adapter-select"
+        id="adapter-select"
+        onChange={handleAdapterSwitch}
+        >
+        <option value={INVALID_ADAPTER_ID} key={INVALID_ADAPTER_ID}>
+          No Selection
+        </option>
+        {Object.entries(config.lm_config).map(([adapterId, a]) => (
+          <option value={adapterId} key={adapterId}>
             {a.label}
           </option>
         ))}
@@ -225,7 +231,7 @@ export function ChatWindow({
     </div>
   ) : (
     <div>
-      no adapters selected
+      no adapters found
     </div>
   )
 

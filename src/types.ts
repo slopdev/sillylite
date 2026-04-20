@@ -48,12 +48,12 @@ export interface Chat {
 // --------------------------------------------------
 
 export interface GlobalConfig {
-  lm_config: LMConfig[]
+  lm_config: Record<string, LMConfig>
 }
 
 export interface LMConfig {
   id: string;
-  adapter_id: string;
+  adapter_kind: string;
   label: string;
   endpoint: string;
   apiKey?: string;

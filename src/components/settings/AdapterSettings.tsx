@@ -2,38 +2,43 @@ import React from "react";
 import type { GlobalConfig, LMConfig } from "@/src/types";
 import { Plus, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+import { objIsEmpty } from "@/src/lib/utils"
 
 interface AdapterSettingsProps {
-  config: LMConfig[];
+  adapters: Record<string, LMConfig>;
   onUpdateConfig: (config: Partial<GlobalConfig>) => void;
 }
 
 export function AdapterSettings({
-  config,
+  adapters,
   onUpdateConfig,
 }: AdapterSettingsProps) {
+  const adaptersIsEmpty = objIsEmpty(adapters);
+
   const handleAdd = () => {
+    const newAdapterId = uuidv4();
     const newAdapter: LMConfig = {
-      id: uuidv4(),
-      adapter_id: "openai",
-      label: "New OpenAI Adapter",
+      id: newAdapterId,
+      adapter_kind: "openai",
+      label: "New Adapter",
       endpoint: "https://api.openai.com/v1",
       apiKey: "",
       model: "gpt-3.5-turbo",
       parameters: { temperature: 0.7 }
     };
-    const adaptersNew = [...config, newAdapter];
+    const adaptersNew = {...adapters};
+    adaptersNew[newAdapterId] = newAdapter;
     onUpdateConfig({ lm_config: adaptersNew });
   };
 
-  const handleUpdate = (idx: number, updates: Partial<LMConfig>) => {
-    const next = [...config];
-    next[idx] = { ...next[idx], ...updates };
-    onUpdateConfig({ lm_config: next });
+  const handleUpdate = (adapterId: string, updates: Partial<LMConfig>) => {
+    const adaptersNew = {...adapters};
+    adaptersNew[adapterId] = {...adapters[adapterId], ...updates};
+    onUpdateConfig({ lm_config: adaptersNew });
   };
 
-  const handleRemove = (idx: number) => {
-    const adaptersNew = config.filter((_, i) => i !== idx);
+  const handleRemove = (adapterId: string) => {
+    const {[adapterId]: removed, ...adaptersNew} = adapters;
     onUpdateConfig({ lm_config: adaptersNew });
   };
 
@@ -51,13 +56,13 @@ export function AdapterSettings({
         </div>
 
         <div className="space-y-4">
-          {config.map((adapter, idx) => (
-            <div key={idx} className="p-4 border border-[#141414] bg-white space-y-4">
+          {!adaptersIsEmpty ? Object.entries(adapters).map(([adapterId, adapter]) => (
+            <div key={adapterId} className="p-4 border border-[#141414] bg-white space-y-4">
               <div className="flex items-center justify-between">
                 <div className="font-bold text-sm uppercase tracking-widest font-mono">
                   {adapter.label}
                 </div>
-                <button onClick={() => handleRemove(idx)} className="text-red-500 hover:bg-red-50 p-1">
+                <button onClick={() => handleRemove(adapterId)} className="text-red-500 hover:bg-red-50 p-1">
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -66,8 +71,8 @@ export function AdapterSettings({
                 <div className="space-y-1">
                   <label className="font-mono text-[10px] opacity-50 uppercase">Type</label>
                   <select 
-                    value={adapter.id}
-                    onChange={(e) => handleUpdate(idx, { id: e.target.value })}
+                    value={adapter.adapter_kind}
+                    onChange={(e) => handleUpdate(adapterId, { adapter_kind: e.target.value })}
                     className="w-full text-xs p-2 border border-[#141414] focus:outline-none bg-white"
                   >
                     <option value="openai">OpenAI / Compatible</option>
@@ -79,7 +84,7 @@ export function AdapterSettings({
                   <label className="font-mono text-[10px] opacity-50 uppercase">Label</label>
                   <input 
                     value={adapter.label}
-                    onChange={(e) => handleUpdate(idx, { label: e.target.value })}
+                    onChange={(e) => handleUpdate(adapterId, { label: e.target.value })}
                     className="w-full text-xs p-2 border border-[#141414] focus:outline-none"
                   />
                 </div>
@@ -87,7 +92,7 @@ export function AdapterSettings({
                   <label className="font-mono text-[10px] opacity-50 uppercase">Endpoint</label>
                   <input 
                     value={adapter.endpoint}
-                    onChange={(e) => handleUpdate(idx, { endpoint: e.target.value })}
+                    onChange={(e) => handleUpdate(adapterId, { endpoint: e.target.value })}
                     className="w-full text-xs p-2 border border-[#141414] focus:outline-none"
                     placeholder={adapter.id === "gemini" ? "Not needed" : "https://..."}
                   />
@@ -96,7 +101,7 @@ export function AdapterSettings({
                   <label className="font-mono text-[10px] opacity-50 uppercase">Model</label>
                   <input 
                     value={adapter.model}
-                    onChange={(e) => handleUpdate(idx, { model: e.target.value })}
+                    onChange={(e) => handleUpdate(adapterId, { model: e.target.value })}
                     className="w-full text-xs p-2 border border-[#141414] focus:outline-none"
                   />
                 </div>
@@ -105,14 +110,14 @@ export function AdapterSettings({
                   <input 
                     type="password"
                     value={adapter.apiKey}
-                    onChange={(e) => handleUpdate(idx, { apiKey: e.target.value })}
+                    onChange={(e) => handleUpdate(adapterId, { apiKey: e.target.value })}
                     className="w-full text-xs p-2 border border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
             </div>
-          ))}
-          {config.length === 0 && (
+          )) :
+          (
             <div className="text-center py-8 border border-dashed border-[#141414]/30 font-mono text-xs opacity-40">
               NO_ADAPTERS_CONFIGURED
             </div>

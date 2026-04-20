@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Plus, Settings, Upload } from "lucide-react";
+import { Plus, Settings, Upload, ChevronsLeft, ChevronsRight } from "lucide-react";
 import type { Char2ChatIndex, Character, Chat, ChatMetadata } from "@/src/types";
+import { cn } from "@/src/lib/utils";
+import { AnimatePresence } from "motion/react";
 
 import { CharacterEntry } from "./CharacterEntry";
+import { CharacterEditor } from "../CharacterEditor";
 
 interface SidebarProps {
   characters: Character[];
@@ -18,9 +21,6 @@ interface SidebarProps {
   onShowSettings: () => void;
 }
 
-import { CharacterEditor } from "./CharacterEditor";
-import { AnimatePresence } from "motion/react";
-
 export function Sidebar({
   characters,
   chatIndex,
@@ -34,14 +34,9 @@ export function Sidebar({
   onImportCharacter,
   onShowSettings
 }: SidebarProps) {
-  const [expandedChars, setExpandedChars] = useState<Record<string, boolean>>({ "__system__": true });
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [editingCharId, setEditingCharId] = useState<string | null>(null);
-
   const editingChar = characters.find(c => c.id === editingCharId);
-
-  const toggleChar = (id: string) => {
-    setExpandedChars(prev => ({ ...prev, [id]: !prev[id] }));
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -49,18 +44,36 @@ export function Sidebar({
   };
 
   return (
-    <div className="w-72 h-full flex flex-col bg-[#E4E3E0] border-r border-[#141414] overflow-hidden">
-      <div className="p-4 border-bottom border-[#141414] flex items-center justify-between">
-        <h1 className="font-mono font-bold text-lg tracking-tighter">SILLY_LITE</h1>
-        <button 
-          onClick={onShowSettings}
-          className="btn-ico"
-        >
-          <Settings size={18} />
-        </button>
+    <div className={cn(
+      "h-full flex flex-col bg-[#E4E3E0] border-r border-[#141414] overflow-hidden transition-all duration-300",
+      isCollapsed ? "w-12" : "w-72"
+    )}>
+      <div className={cn(
+        "p-4 border-bottom border-[#141414] flex items-center",
+        isCollapsed ? "flex-col gap-4 px-0" : "justify-between"
+      )}>
+        {!isCollapsed && <h1 className="font-mono font-bold text-lg tracking-tighter">SILLY_LITE</h1>}
+        <div className={cn("flex", isCollapsed ? "flex-col gap-4" : "gap-1")}>
+          <button 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="btn-ico"
+            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isCollapsed ? <ChevronsRight size={18} /> : <ChevronsLeft size={18} />}
+          </button>
+          <button 
+            onClick={onShowSettings}
+            className="btn-ico"
+          >
+            <Settings size={18} />
+          </button>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div className={cn(
+        "flex-1 overflow-y-auto custom-scrollbar transition-all duration-300",
+        isCollapsed ? "opacity-0 pointer-events-none" : "opacity-100"
+      )}>
         <div className="p-2 space-y-4">
           
           {/* characters */}
@@ -108,6 +121,7 @@ export function Sidebar({
             character={editingChar}
             onSave={(updates) => onUpdateCharacter(editingChar.id, updates)}
             onClose={() => setEditingCharId(null)}
+            onDeleteCharacter={onDeleteCharacter}
           />
         )}
       </AnimatePresence>

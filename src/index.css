@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+:root {
+  --hl-bg0: #E4E4E4;
+  --hl-bg1: #E4E3E0;
+  --hl-bgtext: #141414;
+  --hl-delete: oklch(63.7% 0.237 25.331);
+}
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;

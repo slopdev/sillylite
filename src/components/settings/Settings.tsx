@@ -74,7 +74,7 @@ export function Settings({
 
   const adapterContent = (
     <AdapterSettings
-      config={stagedConfig.lm_config}
+      adapters={stagedConfig.lm_config}
       onUpdateConfig={handleUpdate}
     ></AdapterSettings>
   );

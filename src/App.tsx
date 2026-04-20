@@ -12,7 +12,7 @@ export default function App() {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [chatIndex, setChatIndex] = useState<Char2ChatIndex>({});
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
-  const [config, setConfig] = useState<GlobalConfig>({ lm_config: [] });
+  const [config, setConfig] = useState<GlobalConfig>({ lm_config: {} });
   const [showSettings, setShowSettings] = useState(false);
   const [loading, setLoading] = useState(true);
 

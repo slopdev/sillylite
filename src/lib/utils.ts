@@ -7,6 +7,16 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
+export function objIsEmpty(obj: Object) {
+    for (let key in obj) {
+        if (Object.hasOwn(obj, key)) { // Check for own properties (ES2022+)
+            return false;
+        }
+    }
+    return true;
+}
+
+
 // --------------------------------------------------
 
 // cast a message with swipes to flat message format
