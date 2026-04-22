@@ -12,11 +12,11 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-@layer base {
+/* @layer base {
   body {
     @apply bg-[#E4E3E0] text-[#141414];
   }
-}
+} */
 
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
@@ -35,18 +35,6 @@
      but better to do it in the markdown renderer if we want it robust.
      For now, let's just add a class we can use in the renderer. */
 }
-
-/* Markdown overrides */
-.prose {
-  @apply max-w-none;
-}
-.prose p {
-  @apply mb-4 last:mb-0;
-}
-.prose blockquote {
-  @apply border-l-2 border-[#141414] pl-4 italic opacity-70;
-}
-
 
 .btn-rect {
   display: flex;

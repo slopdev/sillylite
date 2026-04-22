@@ -5,11 +5,12 @@ import { v4 as uuidv4 } from "uuid";
 import { motion, AnimatePresence } from "motion/react";
 import e from "express";
 
-import type { Chat, Character, Message, LMConfig, Swipe, ChatMetadata } from "../types";
-import { applyStdFormatter } from "../lib/formatter";
-import { flattenChat, objIsEmpty } from "../lib/utils";
-import { adaptersRegistry } from "../lib/adapters";
-import { api } from "../lib/api";
+import type { Chat, Character, Message, Swipe, ChatMetadata, GlobalConfig } from "../../types";
+import { applyStdFormatter } from "../../lib/formatter";
+import { flattenChat, objIsEmpty } from "../../lib/utils";
+import { adaptersRegistry } from "../../lib/adapters";
+import { api } from "../../lib/api";
+import { ChatHeader } from "./ChatHeader";
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const INVALID_ADAPTER_ID = "invalid_adapter_id_sentinel"
@@ -30,7 +31,7 @@ interface ChatWindowProps {
   onUpdateChatMetadata: (id: string, updates: Partial<ChatMetadata>) => void;
   onDeleteChat: (id: string) => void;
   onForkChat: (id: Chat | null, index: number) => void;
-  config: { lm_config: Record<string, LMConfig> };
+  config: GlobalConfig;
 }
 
 
@@ -50,9 +51,6 @@ export function ChatWindow({
   const [chatTitle, setChatTitle] = useState("");
   const [chat, setChat] = useState<Chat | null>(null)
   const abortControllerRef = useRef<AbortController | null>(null);
-
-  // TODO: get rid of hard-coded value
-  // bug fix? refactor to adapter uuid->lmconfig instead of list? track adapter uuid as state
   const [activeAdapterId, setActiveAdapterId] = useState<string>(INVALID_ADAPTER_ID);
   const activeAdapter = config.lm_config[activeAdapterId] ?? null;
 
@@ -195,9 +193,7 @@ export function ChatWindow({
     abortControllerRef.current?.abort();
   };
 
-  const handleAdapterSwitch = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedAdapterId = event.target.value;
-    console.log("[handleAdapterSwitch]: ", selectedAdapterId);
+  const handleAdapterSwitch = (selectedAdapterId: string) => {
     setActiveAdapterId(selectedAdapterId);
   };
 
@@ -208,68 +204,17 @@ export function ChatWindow({
 
   // --------------------------------------------------
 
-  const adapterSwitcherContent = (!objIsEmpty(config.lm_config)) ? (
-    <div>
-      <label htmlFor="adapter-select" className="sr-only">
-        Select adapter
-      </label>
-      <select
-        defaultValue={activeAdapterId}
-        name="adapter-select"
-        id="adapter-select"
-        onChange={handleAdapterSwitch}
-        >
-        <option value={INVALID_ADAPTER_ID} key={INVALID_ADAPTER_ID}>
-          No Selection
-        </option>
-        {Object.entries(config.lm_config).map(([adapterId, a]) => (
-          <option value={adapterId} key={adapterId}>
-            {a.label}
-          </option>
-        ))}
-      </select>
-    </div>
-  ) : (
-    <div>
-      no adapters found
-    </div>
-  )
-
-  // --------------------------------------------------
-
   let layout = (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#E4E3E0]">
-      {/* Header */}
-      <div className="px-6 py-3 border-b border-[#141414] flex items-center justify-between bg-white/50">
-        <div>
-          <label htmlFor="chat-rename" className="sr-only">
-            Rename chat title
-          </label>
-          <input 
-            value={chatTitle || ""}
-            onChange={(e) => handleUpdateChatTitle(e.target.value)}
-            placeholder="Untitled Chat"
-            className="font-bold text-sm bg-transparent border-none p-0 focus:ring-0 w-full"
-            name="chat-rename"
-            id="chat-rename"
-          />
-          <p className="text-[10px] font-mono opacity-50 uppercase tracking-tight">
-            {character.name} / {chat.messages.length} MESSAGES
-          </p>
-        </div>
-
-        {/* header right side */}
-        <div className="flex gap-2">
-
-          {adapterSwitcherContent}
-          <button 
-            onClick={() => onDeleteChat(chat.id)}
-            className="p-1.5 hover:bg-red-500 hover:text-white transition-colors"
-          >
-            <Trash2 size={16} />
-          </button>
-        </div>
-      </div>
+      <ChatHeader
+        chat={chat}
+        character={character}
+        config={config}
+        activeAdapterId={activeAdapterId}
+        onAdapterSwitch={handleAdapterSwitch}
+        onUpdateChatTitle={handleUpdateChatTitle}
+        onDeleteChat={onDeleteChat}
+      />
 
       {/* Messages */}
       <div 

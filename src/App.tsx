@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { api } from "./lib/api";
 import type { Char2ChatIndex, Character, Chat, ChatMetadata, GlobalConfig, LMConfig, Message } from "./types";
 import { Sidebar } from "./components/sidebar/Sidebar";
-import { ChatWindow } from "./components/ChatWindow";
+import { ChatWindow } from "./components/chat/ChatWindow";
 import { Settings } from "./components/settings/Settings";
 import { MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
