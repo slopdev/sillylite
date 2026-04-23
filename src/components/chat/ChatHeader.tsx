@@ -5,7 +5,9 @@ import { dialogManager } from "../common/Modal";
 
 const INVALID_ADAPTER_ID = "invalid_adapter_id_sentinel"
 
+// TODO: READY_WEAK should be faint/washed out green
 const STATUS_MAP = {
+  READY_WEAK: { label: "READY_WEAK", color: "text-green-600", icon: <span className="w-2.5 h-2.5 rounded-full bg-green-600" /> },
   READY: { label: "READY", color: "text-green-600", icon: <span className="w-2.5 h-2.5 rounded-full bg-green-600" /> },
   BUSY: { label: "BUSY", color: "text-yellow-500", icon: <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" /> },
   ERROR: { label: "ERROR", color: "text-red-500", icon: <span className="w-2.5 h-2.5 rounded-full bg-red-500" /> },
@@ -46,25 +48,34 @@ export function ChatHeader({
 
   // --------------------------------------------------
 
+  // ./src/index.css:2
   const ActivityIndicator = () => {
     const status: StatusType = "READY";
     const { label, color, icon } = STATUS_MAP[status];
 
     const handleShowDetails = () => {
       dialogManager.show(
-        <div className="space-y-4 p-2">
-          <h3 className="font-mono font-bold border-b border-[#141414] pb-1 uppercase text-xs">Adapter_Metrics</h3>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] font-mono">
-            <span className="opacity-50">STATUS:</span> <span className={`${color} font-bold`}>{label}</span>
-            <span className="opacity-50">AVG_LATENCY:</span> <span>245ms</span>
-            <span className="opacity-50">TOKENS_SEC:</span> <span>42.5/s</span>
-            <span className="opacity-50">UPTIME:</span> <span>99.98%</span>
+        <div className="activity-dialog">
+          <h3 className="activity-dialog__title">Adapter_Metrics</h3>
+          <div className="activity-dialog__metrics">
+            <span className="activity-dialog__label">STATUS:</span>
+            <span className={`activity-dialog__value ${color}`}>{label}</span>
+            
+            <span className="activity-dialog__label">AVG_LATENCY:</span>
+            <span className="activity-dialog__value">245ms</span>
+            
+            <span className="activity-dialog__label">TOKENS_SEC:</span>
+            <span className="activity-dialog__value">42.5/s</span>
+            
+            <span className="activity-dialog__label">UPTIME:</span>
+            <span className="activity-dialog__value">99.98%</span>
           </div>
-          <div className="text-[11px] font-mono">
-            {/* temp log content placeholder */}
-            <span>LOG:</span>
-            <div className="overflow-auto w-full">
-              <pre><code>{JSON.stringify(config, null, 2)}</code></pre>
+          <div className="activity-dialog__log">
+            <span className="activity-dialog__log-label">LOG:</span>
+            <div className="activity-dialog__log-content">
+              <pre className="activity-dialog__code">
+                <code>{JSON.stringify(config, null, 2)}</code>
+              </pre>
             </div>
           </div>
         </div>,
@@ -73,15 +84,16 @@ export function ChatHeader({
     };
 
     return (
-      <div className="relative group flex items-center">
+      <div id="activity-indicator" className="activity-indicator">
         <button 
+          id="activity-indicator__button"
           onClick={handleShowDetails}
-          className="p-1.5 hover:bg-[#141414] hover:text-[#E4E3E0] transition-colors flex items-center justify-center"
+          className="activity-indicator__button"
         >
           {icon}
         </button>
-        <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 hidden group-hover:block z-50 pointer-events-none">
-          <div className="bg-[#141414] text-[#E4E3E0] text-[10px] font-mono py-1 px-2 whitespace-nowrap border border-[#E4E3E0]">
+        <div id="activity-indicator__tooltip" className="activity-indicator__tooltip">
+          <div className="activity-indicator__tooltip-content">
             LATENCY: 245ms | {label}
           </div>
         </div>

@@ -1,3 +1,7 @@
+/* header strmatch keys for jumping
+jjj001
+*/
+
 @import "tailwindcss";
 
 :root {
@@ -35,6 +39,8 @@
      but better to do it in the markdown renderer if we want it robust.
      For now, let's just add a class we can use in the renderer. */
 }
+
+/* -------------------------------------------------- */
 
 .btn-rect {
   display: flex;
@@ -83,3 +89,114 @@
   background-color: #141414;
   color: #E4E3E0;
 }
+
+
+/* -------------------------------------------------- */
+/* Activity Indicator Component --- jjj001*/
+.activity-indicator {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.activity-indicator__button {
+  padding: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.activity-indicator__button:hover {
+  background-color: #141414;
+  color: #E4E3E0;
+}
+
+.activity-indicator__tooltip {
+  position: absolute;
+  top: 100%;
+  margin-top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.activity-indicator:hover .activity-indicator__tooltip {
+  display: block;
+}
+
+.activity-indicator__tooltip-content {
+  background-color: #141414;
+  color: #E4E3E0;
+  font-size: 10px;
+  font-family: monospace;
+  padding: 0.25rem 0.5rem;
+  white-space: nowrap;
+  border: 1px solid #E4E3E0;
+}
+
+/* Activity Dialog Styles */
+.activity-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.activity-dialog__title {
+  font-family: monospace;
+  font-weight: bold;
+  border-bottom: 1px solid #141414;
+  padding-bottom: 0.25rem;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin: 0;
+}
+
+.activity-dialog__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 0.25rem 1rem;
+  font-size: 11px;
+  font-family: monospace;
+}
+
+.activity-dialog__label {
+  opacity: 0.5;
+}
+
+.activity-dialog__value {
+  font-weight: bold;
+}
+
+.activity-dialog__log {
+  font-size: 11px;
+  font-family: monospace;
+}
+
+.activity-dialog__log-label {
+  display: inline-block;
+  margin-bottom: 0.25rem;
+}
+
+.activity-dialog__log-content {
+  overflow: auto;
+  width: 100%;
+}
+
+.activity-dialog__code {
+  margin: 0;
+  font-size: 10px;
+  font-family: monospace;
+}
+
+.activity-dialog__code code {
+  font-family: monospace;
+}
+
+/* -------------------------------------------------- */
