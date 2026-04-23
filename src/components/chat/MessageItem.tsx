@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import type { Message, Character } from "../../types";
+import { cn } from "../../lib/utils";
 import ReactMarkdown from "react-markdown";
 import { 
   ChevronLeft, 
@@ -57,25 +58,25 @@ export function MessageItem({
 
   // Action buttons moved to the header for better mobile UX and to remove hover-dependent visibility
   const Actions = () => (
-    <div style={{ display: "flex", gap: "4px" }}>
+    <div className="message-item__actions">
       <button 
         onClick={() => setIsEditing(true)}
-        style={actionBtnStyle}
+        className="message-item__action-btn"
         title="Edit message"
       >
         <Edit3 size={14} />
       </button>
       {isAssistant && (
-        <button onClick={onRegenerate} style={actionBtnStyle} title="Regenerate response">
+        <button onClick={onRegenerate} className="message-item__action-btn" title="Regenerate response">
           <RotateCcw size={14} />
         </button>
       )}
-      <button onClick={onFork} style={actionBtnStyle} title="Fork conversation">
+      <button onClick={onFork} className="message-item__action-btn" title="Fork conversation">
         <GitBranch size={14} />
       </button>
       <button 
         onClick={onDelete} 
-        style={{ ...actionBtnStyle, color: "#dc2626" }} 
+        className="message-item__action-btn message-item__action-btn--delete"
         title="Delete message"
       >
         <Trash2 size={14} />
@@ -84,69 +85,39 @@ export function MessageItem({
   );
 
   return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      gap: "8px",
-      maxWidth: "896px",
-      width: "100%",
-      margin: "0 auto",
-      alignItems: isAssistant ? "flex-start" : "flex-end",
-      padding: "8px 0"
-    }}>
+    <div className={cn(
+      "message-item",
+      isAssistant ? "message-item--assistant" : "message-item--user"
+    )}>
       {/* Header: Name, Time, and Actions */}
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        fontSize: "12px",
-        fontFamily: "monospace",
-        color: isAssistant ? "#666" : "#999"
-      }}>
-        <div style={{ display: "flex", gap: "8px" }}>
-          <span style={{ fontWeight: "bold", color: isAssistant ? "#333" : "#ccc" }}>
+      <div className="message-item__header">
+        <div className="message-item__meta">
+          <span className="message-item__name">
             {isAssistant ? character.name : "USER"}
           </span>
-          <span>
+          <span className="message-item__time">
             {new Date(message.modified_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
       </div>
 
       {/* Content Container */}
-      <div style={{
-        maxWidth: "90%",
-        width: "fit-content",
-        padding: "16px",
-        borderRadius: "8px",
-        backgroundColor: isAssistant ? "#fff" : "#111",
-        color: isAssistant ? "#000" : "#fff",
-        border: `1px solid ${isAssistant ? "#e5e5e5" : "#333"}`,
-      }}>
+      <div className="message-item__bubble">
         {isEditing ? (
-          <div>
+          <div className="message-item__edit-container">
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              style={{
-                width: "100%",
-                background: "transparent",
-                border: "none",
-                outline: "none",
-                resize: "none",
-                color: "inherit",
-                fontFamily: "inherit",
-                fontSize: "14px"
-              }}
+              className="message-item__textarea"
               autoFocus
             />
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "4px", marginTop: "8px" }}>
-              <button onClick={handleCancelEdit} style={editBtnStyle}><X size={14} /></button>
-              <button onClick={handleSaveEdit} style={editBtnStyle}><Check size={14} /></button>
+            <div className="message-item__edit-actions">
+              <button onClick={handleCancelEdit} className="message-item__action-btn"><X size={14} /></button>
+              <button onClick={handleSaveEdit} className="message-item__action-btn"><Check size={14} /></button>
             </div>
           </div>
         ) : (
-          <div style={{ fontSize: "14px", lineHeight: "1.6" }}>
+          <div className="message-item__text">
             <ReactMarkdown>{message.content}</ReactMarkdown>
           </div>
         )}
@@ -157,30 +128,16 @@ export function MessageItem({
 
       {/* Swipe Navigation */}
       {hasSwipes && !isEditing && (
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          fontSize: "12px",
-          fontFamily: "monospace",
-          color: isAssistant ? "#666" : "#999",
-          paddingLeft: "16px"
-        }}>
-          <button onClick={() => handleSwipe(-1)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0 }}>
+        <div className="message-item__swipes">
+          <button onClick={() => handleSwipe(-1)} className="message-item__action-btn p-0">
             <ChevronLeft size={14} />
           </button>
           <span>{currentSwipeIndex + 1} / {message.swipes?.length}</span>
-          <button onClick={() => handleSwipe(1)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0 }}>
+          <button onClick={() => handleSwipe(1)} className="message-item__action-btn p-0">
             <ChevronRight size={14} />
           </button>
           {message.swipes?.[currentSwipeIndex]?.model && (
-            <span style={{
-              marginLeft: "8px",
-              padding: "2px 6px",
-              border: `1px solid ${isAssistant ? "#ccc" : "#444"}`,
-              borderRadius: "4px",
-              fontSize: "10px"
-            }}>
+            <span className="message-item__swipe-model">
               {message.swipes[currentSwipeIndex].model}
             </span>
           )}
@@ -189,25 +146,3 @@ export function MessageItem({
     </div>
   );
 }
-
-// Extracted vanilla CSS properties to reduce repetition
-const actionBtnStyle: React.CSSProperties = {
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  padding: "4px",
-  color: "#888",
-  display: "flex",
-  alignItems: "center"
-};
-
-const editBtnStyle: React.CSSProperties = {
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  padding: "4px",
-  color: "inherit",
-  opacity: 0.7,
-  display: "flex"
-};
-

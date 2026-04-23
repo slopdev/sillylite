@@ -3,7 +3,6 @@ import { MessageItem } from "./MessageItem";
 import { Send, RotateCcw, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { motion, AnimatePresence } from "motion/react";
-import e from "express";
 
 import type { Chat, Character, Message, Swipe, ChatMetadata, GlobalConfig } from "../../types";
 import { applyStdFormatter } from "../../lib/formatter";
@@ -17,7 +16,7 @@ const INVALID_ADAPTER_ID = "invalid_adapter_id_sentinel"
 
 function _wrapContainer(Component: React.ReactNode): React.ReactNode{
     return (
-      <div className="chat-window-container h-full">
+      <div className="chat-window-container">
         {Component}
       </div>
     );
@@ -205,7 +204,7 @@ export function ChatWindow({
   // --------------------------------------------------
 
   let layout = (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#E4E3E0]">
+    <div className="chat-window">
       <ChatHeader
         chat={chat}
         character={character}
@@ -217,9 +216,7 @@ export function ChatWindow({
       />
 
       {/* Messages */}
-      <div 
-        className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar"
-      >
+      <div className="chat-window__messages custom-scrollbar">
         <AnimatePresence initial={false}>
           {chat.messages.map((msg, idx) => (
             <MessageItem
@@ -243,17 +240,17 @@ export function ChatWindow({
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex gap-2 items-center text-[10px] font-mono opacity-50"
+            className="chat-window__loading"
           >
-            <div className="w-1 h-1 bg-[#141414] animate-ping" />
+            <div className="chat-window__loading-dot" />
             GENERATING_RESPONSE...
           </motion.div>
         )}
       </div>
 
       {/* Input */}
-      <div className="p-6 border-t border-[#141414] bg-white/30">
-        <div className="max-w-4xl mx-auto relative">
+      <div className="chat-window__footer">
+        <div className="chat-window__input-container">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -264,22 +261,23 @@ export function ChatWindow({
               }
             }}
             placeholder="Type a message..."
-            className="w-full bg-white border border-[#141414] p-4 pr-12 min-h-[100px] max-h-[300px] resize-none focus:outline-none focus:ring-1 focus:ring-[#141414] transition-all font-sans text-sm"
+            className="chat-window__input"
+            style={{ width: '100%', boxSizing: 'border-box', flex: 1 }}
           />
 
-          <div className="absolute right-3 bottom-3 flex gap-2">
+          <div className="chat-window__input-actions">
             {isGenerating ? (
               <button 
                 onClick={handleStop}
-                className="p-2 bg-red-500 text-white hover:bg-red-600 transition-colors"
+                className="chat-window__stop-btn"
               >
-                <RotateCcw size={18} className="animate-spin" />
+                <RotateCcw size={18} className="u-spin" />
               </button>
             ) : (
               <button 
                 onClick={handleSend}
                 disabled={!input.trim()}
-                className="p-2 bg-[#141414] text-[#E4E3E0] hover:bg-[#141414]/90 disabled:opacity-30 transition-colors"
+                className="chat-window__send-btn"
               >
                 <Send size={18} />
               </button>

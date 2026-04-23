@@ -101,17 +101,17 @@ export function Settings({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#141414]/80 -sm p-4"
+      className="settings-overlay"
     >
       <motion.div 
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-[#E4E3E0] border border-[#141414] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl"
+        className="settings-modal"
       >
 
         {/* Header */}
-        <div className="p-4 border-b border-[#141414] flex items-center justify-between bg-white">
-          <h2 className="font-mono font-bold uppercase tracking-widest">System_Settings {unsaved ? "*" : ""}</h2>
+        <div className="settings-header">
+          <h2 className="settings-title">System_Settings {unsaved ? "*" : ""}</h2>
           <button onClick={handleClose} className="btn-ico">
             <X size={20} />
           </button>
@@ -122,11 +122,11 @@ export function Settings({
           defaultTab={currentTab}
           onChange={handleTabChange}
           orientation="vertical"
-          style={{height: "80vh", overflowY: "scroll"}}
+          className="settings-body"
           ></Tabs>
 
         {/* Bottom bar */}
-        <div className="p-4 border-t border-[#141414] bg-white flex justify-end">
+        <div className="settings-footer">
           <button 
             onClick={handleSave}
             className="btn-rect"

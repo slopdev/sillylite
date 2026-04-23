@@ -45,15 +45,15 @@ export function Sidebar({
 
   return (
     <div className={cn(
-      "h-full flex flex-col bg-[#E4E3E0] border-r border-[#141414] overflow-hidden transition-all duration-300",
-      isCollapsed ? "w-12" : "w-72"
+      "sidebar",
+      isCollapsed && "sidebar--collapsed"
     )}>
       <div className={cn(
-        "p-4 border-bottom border-[#141414] flex items-center",
-        isCollapsed ? "flex-col gap-4 px-0" : "justify-between"
+        "sidebar__header",
+        isCollapsed && "sidebar__header--collapsed"
       )}>
-        {!isCollapsed && <h1 className="font-mono font-bold text-lg tracking-tighter">SILLY_LITE</h1>}
-        <div className={cn("flex", isCollapsed ? "flex-col gap-4" : "gap-1")}>
+        {!isCollapsed && <h1 className="sidebar__logo">SILLY_LITE</h1>}
+        <div className={cn("sidebar__actions", isCollapsed && "sidebar__actions--collapsed")}>
           <button 
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="btn-ico"
@@ -71,21 +71,21 @@ export function Sidebar({
       </div>
 
       <div className={cn(
-        "flex-1 overflow-y-auto custom-scrollbar transition-all duration-300",
-        isCollapsed ? "opacity-0 pointer-events-none" : "opacity-100"
+        "sidebar__content custom-scrollbar",
+        isCollapsed && "sidebar__content--collapsed"
       )}>
-        <div className="p-2 space-y-4">
+        <div className="sidebar__inner">
           
           {/* characters */}
-          <div className="characters-container">
+          <div className="sidebar__section">
 
             {/* character section header*/}
-            <div className="flex items-center justify-between px-2 mb-2">
-              <span className="font-mono text-[10px] opacity-50 uppercase tracking-widest">Characters</span>
-              <div className="flex gap-1">
+            <div className="sidebar__section-header">
+              <span className="sidebar__section-label">Characters</span>
+              <div className="sidebar__section-actions">
                 <label className="btn-ico">
                   <Upload size={14} />
-                  <input type="file" className="hidden" onChange={handleFileChange} accept=".json,.png" />
+                  <input type="file" className="u-hidden" onChange={handleFileChange} accept=".json,.png" />
                 </label>
                 <button 
                   onClick={onCreateCharacter}
@@ -97,7 +97,7 @@ export function Sidebar({
             </div>
             
             {/* character entries */}
-            <div className="character-entry-container space-y-1">
+            <div className="sidebar__list">
               {characters.map(char => (
                 <CharacterEntry 
                   key={char.id}

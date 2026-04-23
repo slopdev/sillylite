@@ -7,11 +7,11 @@ const INVALID_ADAPTER_ID = "invalid_adapter_id_sentinel"
 
 // TODO: READY_WEAK should be faint/washed out green
 const STATUS_MAP = {
-  READY_WEAK: { label: "READY_WEAK", color: "text-green-600", icon: <span className="w-2.5 h-2.5 rounded-full bg-green-600" /> },
-  READY: { label: "READY", color: "text-green-600", icon: <span className="w-2.5 h-2.5 rounded-full bg-green-600" /> },
-  BUSY: { label: "BUSY", color: "text-yellow-500", icon: <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" /> },
-  ERROR: { label: "ERROR", color: "text-red-500", icon: <span className="w-2.5 h-2.5 rounded-full bg-red-500" /> },
-  OFFLINE: { label: "OFFLINE", color: "text-gray-400", icon: <span className="w-2.5 h-2.5 rounded-full bg-gray-400" /> },
+  READY_WEAK: { label: "READY_WEAK", color: "status-text--ready", icon: <span className="status-icon status-icon--ready" /> },
+  READY: { label: "READY", color: "status-text--ready", icon: <span className="status-icon status-icon--ready" /> },
+  BUSY: { label: "BUSY", color: "status-text--busy", icon: <span className="status-icon status-icon--busy" /> },
+  ERROR: { label: "ERROR", color: "status-text--error", icon: <span className="status-icon status-icon--error" /> },
+  OFFLINE: { label: "OFFLINE", color: "status-text--offline", icon: <span className="status-icon status-icon--offline" /> },
 } as const;
 
 type StatusType = keyof typeof STATUS_MAP;
@@ -131,7 +131,7 @@ export function ChatHeader({
 
 
   return (
-    <div className="px-6 py-3 border-b border-[#141414] flex items-center justify-between bg-white/50">
+    <div className="chat-header">
       <div>
         <label htmlFor="chat-rename" className="sr-only">
           Rename chat title
@@ -140,22 +140,22 @@ export function ChatHeader({
           value={chat.title || ""}
           onChange={(e) => onUpdateChatTitle(e.target.value)}
           placeholder="Untitled Chat"
-          className="font-bold text-sm bg-transparent border-none p-0 focus:ring-0 w-full"
+          className="chat-header__title-input"
           name="chat-rename"
           id="chat-rename"
         />
-        <p className="text-[10px] font-mono opacity-50 uppercase tracking-tight">
+        <p className="chat-header__subtitle">
           {character.name} / {chat.messages.length} MESSAGES
         </p>
       </div>
 
       {/* header right side */}
-      <div className="flex gap-2">
+      <div className="chat-header__actions">
         <ActivityIndicator />
         <AdapterSwitcher />
         <button 
           onClick={() => onDeleteChat(chat.id)}
-          className="p-1.5 hover:bg-red-500 hover:text-white transition-colors"
+          className="chat-header__delete-btn btn-ico"
         >
           <Trash2 size={16} />
         </button>

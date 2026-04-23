@@ -195,10 +195,10 @@ export default function App() {
   }
 
   // --------------------------------------------------
-
+  // ./src/index.css:3
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#E4E3E0] font-mono">
+      <div className="app-loading">
         <motion.div
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ repeat: Infinity, duration: 1.5 }}
@@ -210,7 +210,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen bg-[#E4E3E0] text-[#141414] font-sans selection:bg-[#141414] selection:text-[#E4E3E0]">
+    <div className="app-container">
       <Sidebar
         characters={characters}
         chatIndex={chatIndex}
@@ -225,7 +225,7 @@ export default function App() {
         onShowSettings={() => setShowSettings(true)}
       />
 
-      <main className="flex-1 flex flex-col relative overflow-hidden border-l border-[#141414]">
+      <main className="app-main">
         {activeChatId ? (
           <ChatWindow
             chatId={activeChatId}
@@ -236,9 +236,9 @@ export default function App() {
             config={config}
           />
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center opacity-30">
+          <div className="app-empty-state">
             <MessageSquare size={64} strokeWidth={1} />
-            <p className="mt-4 font-mono text-sm">SELECT_OR_CREATE_CHAT</p>
+            <p className="app-empty-state__text">SELECT_OR_CREATE_CHAT</p>
           </div>
         )}
 

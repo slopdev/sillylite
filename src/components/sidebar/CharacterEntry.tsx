@@ -31,8 +31,8 @@ export function CharacterEntry({
     <div key={character.id} className="character-entry group">
       <div 
         className={cn(
-          "flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-[#141414]/5 transition-colors",
-          expanded && "bg-[#141414]/5"
+          "character-entry__header",
+          expanded && "character-entry__header--expanded"
         )}
         onClick={toggleExpanded}
       >
@@ -40,7 +40,7 @@ export function CharacterEntry({
 
         {/* avatar thumbnail */}
         <div 
-          className="w-6 h-6 bg-[#141414] flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80"
+          className="character-entry__avatar"
           onClick={(e) => { e.stopPropagation(); onEditChar(character.id); }}
         >
           {character.avatar ? (
@@ -50,7 +50,7 @@ export function CharacterEntry({
           )}
         </div>
 
-        <span className="flex-1 truncate text-sm font-medium">{character.name}</span>
+        <span className="character-entry__name">{character.name}</span>
         <button 
           onClick={(e) => { e.stopPropagation(); onCreateChat(character.id); }}
           className="btn-ico"
@@ -60,21 +60,21 @@ export function CharacterEntry({
       </div>
 
       {expanded && (
-        <div className="ml-6 mt-1 space-y-0.5 border-l border-[#141414]/20">
+        <div className="character-entry__chats">
           {chats.filter(c => c.character_id === character.id).map(chat => (
             <div 
               key={chat.id}
               className={cn(
-                "group/chat flex items-center gap-2 px-3 py-1.5 cursor-pointer text-sm transition-colors",
-                activeChatId === chat.id ? "bg-[#141414] text-[#E4E3E0]" : "hover:bg-[#141414]/10"
+                "chat-entry",
+                activeChatId === chat.id && "chat-entry--active"
               )}
               onClick={() => onSelectChat(chat.id)}
             >
-              <MessageSquare size={12} className={activeChatId === chat.id ? "opacity-100" : "opacity-40"} />
-              <span className="flex-1 truncate">{chat.title || "Untitled Chat"}</span>
+              <MessageSquare size={12} className="chat-entry__icon" />
+              <span className="chat-entry__title">{chat.title || "Untitled Chat"}</span>
               <button 
                 onClick={(e) => { e.stopPropagation(); onDeleteChat(chat.id); }}
-                className="opacity-0 group-hover/chat:opacity-100 p-1 hover:bg-red-500 hover:text-white transition-all"
+                className="chat-entry__delete"
               >
                 <Trash2 size={10} />
               </button>

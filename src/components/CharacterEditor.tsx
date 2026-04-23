@@ -35,56 +35,56 @@ export function CharacterEditor({ character, onSave, onClose, onDeleteCharacter 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#141414]/80 p-4"
+      className="char-editor-overlay"
     >
       <motion.div 
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-[#E4E3E0] border border-[#141414] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl"
+        className="char-editor-modal"
       >
-        <div className="p-4 border-b border-[#141414] flex items-center justify-between bg-white">
-          <h2 className="font-mono font-bold uppercase tracking-widest">Character_Editor</h2>
-          <button onClick={onClose} className="p-1 hover:bg-[#141414] hover:text-[#E4E3E0] transition-colors">
+        <div className="char-editor-header">
+          <h2 className="char-editor-title">Character_Editor</h2>
+          <button onClick={onClose} className="char-editor-close">
             <X size={20} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
-          <div className="flex gap-6">
-            <div className="w-32 h-32 bg-[#141414] flex items-center justify-center shrink-0">
+        <div className="char-editor-body custom-scrollbar">
+          <div style={{ display: 'flex', gap: '1.5rem' }}>
+            <div className="char-editor-avatar-box">
               {character.avatar ? (
-                <img src={character.avatar} alt="" className="w-full h-full object-cover" />
+                <img src={character.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
-                <User size={48} className="text-[#E4E3E0]" />
+                <User size={48} style={{ color: 'var(--hl-bg1)' }} />
               )}
             </div>
-            <div className="flex-1 space-y-4">
-              <div className="space-y-1">
-                <label className="font-mono text-[10px] opacity-50 uppercase">Name</label>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="char-editor-field">
+                <label className="char-editor-label">Name</label>
                 <input 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full text-sm p-2 border border-[#141414] focus:outline-none bg-white"
+                  className="char-editor-input"
                 />
               </div>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {["description", "personality", "scenario", "first_mes", "mes_example"].map(key => (
-              <div key={key} className="space-y-1">
-                <label className="font-mono text-[10px] opacity-50 uppercase">{key.replace("_", " ")}</label>
+              <div key={key} className="char-editor-field">
+                <label className="char-editor-label">{key.replace("_", " ")}</label>
                 <textarea 
                   value={String(globals[key] || "")}
                   onChange={(e) => updateGlobal(key, e.target.value)}
-                  className="w-full text-xs p-2 border border-[#141414] focus:outline-none bg-white min-h-[80px] font-sans"
+                  className="char-editor-textarea"
                 />
               </div>
             ))}
           </div>
         </div>
 
-        <div className="p-4 border-t border-[#141414] bg-white flex">
+        <div className="char-editor-footer">
           <button 
             onClick={handleDelete}
             className="btn-ico"
@@ -93,7 +93,7 @@ export function CharacterEditor({ character, onSave, onClose, onDeleteCharacter 
           </button>
           <button 
             onClick={handleSave}
-            className="btn-rect ml-auto"
+            className="btn-rect u-ml-auto"
           >
             <Save size={18} /> SAVE_CHARACTER
           </button>
