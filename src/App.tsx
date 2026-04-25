@@ -7,6 +7,17 @@ import { Settings } from "./components/settings/Settings";
 import { MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
+import { SearchModal } from "./components/SearchModal"
+
+// for search modal
+const MOCK_DATA = [
+  { id: '1', title: 'Result1', previewContent: 'Details regarding the first result.' },
+  { id: '2', title: 'Result2', previewContent: 'This is the extended preview for Result 2 as seen in the sketch.' },
+  { id: '3', title: 'Result3', previewContent: 'More information about the third item goes right here.' },
+  { id: '4', title: 'Settings', previewContent: 'Configure your application preferences.' },
+  { id: '5', title: 'Profile', previewContent: 'View and edit your user profile data.' },
+];
+
 
 export default function App() {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -211,6 +222,12 @@ export default function App() {
 
   return (
     <div className="app-container">
+
+      {/* temp */}
+      <SearchModal 
+        isOpen={false}
+        onClose={() => {}}
+      />
       <Sidebar
         characters={characters}
         chatIndex={chatIndex}

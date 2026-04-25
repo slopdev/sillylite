@@ -1,0 +1,97 @@
+/* SearchModal.css */
+
+.search-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  font-family: sans-serif;
+}
+
+.search-modal-container {
+  background-color: #ffffff;
+  width: 800px;
+  height: 600px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.search-modal-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden; /* Contains the scrollable list */
+}
+
+.search-modal-list {
+  width: 50%; /* Roughly half the modal width based on image */
+  overflow-y: auto;
+  padding: 40px 0; /* Creates space at top/bottom of list */
+}
+
+.search-modal-item {
+  padding: 4px 40px; /* Indentation matches the sketch */
+  cursor: pointer;
+  font-size: 14px;
+  color: #000;
+}
+
+.search-modal-item:hover {
+  background-color: #f0f0f0;
+}
+
+.search-modal-item.selected {
+  background-color: #cccccc; /* Solid gray background for selected item */
+}
+
+.search-modal-preview {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* A very faint left border can help separate areas if desired, 
+     though the sketch implies separation mostly by layout */
+  /* border-left: 1px solid #eee; */ 
+}
+
+.preview-placeholder {
+  font-size: 72px; /* Very large text to match "Preview" in sketch */
+  font-weight: normal;
+  color: #000;
+}
+
+.search-modal-footer {
+  display: flex;
+  align-items: center;
+  padding: 15px 40px;
+  background-color: #ffffff;
+  /* Minimal border to separate footer slightly */
+  border-top: 1px solid #e0e0e0;
+}
+
+.search-modal-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: transparent;
+}
+
+.search-modal-input::placeholder {
+  color: #333;
+}
+
+.search-modal-counter {
+  font-size: 14px;
+  color: #333;
+  margin-left: 20px;
+  white-space: nowrap;
+}
