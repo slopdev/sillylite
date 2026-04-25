@@ -1,7 +1,8 @@
-import { Character, Chat, GlobalConfig, LMConfig } from "@/src/types";
+import { Character, Chat, GlobalConfig, ChatMetadata } from "@/src/types";
 import { objIsEmpty } from "@/src/lib/utils";
 import { Trash2 } from "lucide-react";
 import { dialogManager } from "../common/Modal";
+import { useState } from "react";
 
 const INVALID_ADAPTER_ID = "invalid_adapter_id_sentinel"
 
@@ -22,7 +23,7 @@ interface ChatHeaderProps {
   config: GlobalConfig;
   activeAdapterId: string;
   onAdapterSwitch: (adapterId: string) => void;
-  onUpdateChatTitle: (newTitle: string) => void;
+  onUpdateChatMetadata: (id: string, updates: Partial<ChatMetadata>) => void;
   onDeleteChat: (id: string) => void;
 }
 
@@ -32,9 +33,11 @@ export function ChatHeader({
   config,
   activeAdapterId,
   onAdapterSwitch,
-  onUpdateChatTitle,
+  onUpdateChatMetadata,
   onDeleteChat,
 }: ChatHeaderProps) {
+
+  const [chatTitle, setChatTitle] = useState<string>(chat?.title ?? "");
 
   if (chat === null) {
     return <div>nullchat placeholder</div>
@@ -44,6 +47,11 @@ export function ChatHeader({
     const selectedAdapterId = event.target.value;
     console.log("[handleAdapterSwitch]: ", selectedAdapterId);
     onAdapterSwitch(selectedAdapterId);
+  };
+
+  const handleUpdateChatTitle = (newTitle: string) => {
+    onUpdateChatMetadata(chat.id, { title: newTitle});
+    setChatTitle(newTitle);
   };
 
   // --------------------------------------------------
@@ -137,8 +145,8 @@ export function ChatHeader({
           Rename chat title
         </label>
         <input 
-          value={chat.title || ""}
-          onChange={(e) => onUpdateChatTitle(e.target.value)}
+          value={chatTitle || ""}
+          onChange={(e) => handleUpdateChatTitle(e.target.value)}
           placeholder="Untitled Chat"
           className="chat-header__title-input"
           name="chat-rename"

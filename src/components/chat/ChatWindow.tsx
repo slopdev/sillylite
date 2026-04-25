@@ -47,7 +47,6 @@ export function ChatWindow({
   const [input, setInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [chatTitle, setChatTitle] = useState("");
   const [chat, setChat] = useState<Chat | null>(null)
   const abortControllerRef = useRef<AbortController | null>(null);
   const [activeAdapterId, setActiveAdapterId] = useState<string>(INVALID_ADAPTER_ID);
@@ -62,7 +61,6 @@ export function ChatWindow({
 
       await sleep(500);   // simulate a slow load
       setChat(resChat);
-      setChatTitle(resChat.title ?? "");
       setLoaded(true);
     }
     loadMessages();
@@ -196,11 +194,6 @@ export function ChatWindow({
     setActiveAdapterId(selectedAdapterId);
   };
 
-  const handleUpdateChatTitle = (newTitle: string) => {
-    onUpdateChatMetadata(chat.id, { title: newTitle});
-    setChatTitle(newTitle);
-  };
-
   // --------------------------------------------------
 
   let layout = (
@@ -211,7 +204,7 @@ export function ChatWindow({
         config={config}
         activeAdapterId={activeAdapterId}
         onAdapterSwitch={handleAdapterSwitch}
-        onUpdateChatTitle={handleUpdateChatTitle}
+        onUpdateChatMetadata={onUpdateChatMetadata}
         onDeleteChat={onDeleteChat}
       />
 
