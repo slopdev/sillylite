@@ -1,5 +1,5 @@
 import nunjucks from "nunjucks";
-import type { Chat, FlatChat, Message, Globals } from "../types";
+import type { Chat, FlatChat, Globals } from "../types";
 
 const env = new nunjucks.Environment();
 

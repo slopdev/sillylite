@@ -48,6 +48,7 @@ async function findChatPath(chatId: string): Promise<string | null> {
   return null;
 }
 
+// old format
 function parseChatJsonl(content: string): Chat {
   const lines = content.trim().split("\n");
   const metadata = JSON.parse(lines[0]);
@@ -56,6 +57,7 @@ function parseChatJsonl(content: string): Chat {
   return { ...metadata, globals, messages };
 }
 
+// old format
 function serializeChatJsonl(chat: Chat): string {
   const { id, character_id, title, fork_of, created_at, modified_at, globals, messages } = chat;
   const metadata = { id, character_id, title, fork_of, created_at, modified_at };
